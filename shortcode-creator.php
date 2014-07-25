@@ -8,14 +8,28 @@
 	Author URI: https://github.com/mic1780/
 	Text Domain: 
  */
+/*
+    Wordpress Shortcode Creator plugin
+    Copyright (C) 2014  Michael Cummins
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program;
+ */
 if( ! defined('ABSPATH') ) {
 	header('Status: 403 Forbidden');
 	header('HTTP/1.1 403 Forbidden');
 	exit;
 }//END IF
-
-define( 'SCODE_DEBUG_MODE', false );
-define( 'SCODE_PLUGIN_DEBUG_DIR', 'debug/' );
 
 define( 'SCODE_VERSION', '0.0.1-dev' );
 define( 'SCODE_PLUGIN_FILE', __FILE__ );
@@ -26,27 +40,18 @@ define( 'SCODE_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
 define( 'SCODE_PLUGIN_ERROR_HANDLERS', SCODE_PLUGIN_DIR . 'pages/errorHandlers.php' );
 define( 'SCODE_PLUGIN_SUCCESS_HANDLERS', SCODE_PLUGIN_DIR . 'pages/successHandlers.php' );
 
-define( 'SCODE_PLUGIN_LIVE_ARRAY_FILE', SCODE_PLUGIN_DIR . 'includes/infoArray.php' );
-define( 'SCODE_PLUGIN_LIVE_LOG_FILE', SCODE_PLUGIN_DIR . 'logs/log.txt' );
-
-define( 'SCODE_PLUGIN_DEBUG_ARRAY_FILE', SCODE_PLUGIN_DIR . SCODE_PLUGIN_DEBUG_DIR . 'infoArray.php' );
-define( 'SCODE_PLUGIN_DEBUG_LOG_FILE', SCODE_PLUGIN_DIR . SCODE_PLUGIN_DEBUG_DIR . 'log.txt' );
-
-define( 'SCODE_PLUGIN_ARRAY_FILE', (SCODE_DEBUG_MODE ? SCODE_PLUGIN_DEBUG_ARRAY_FILE : SCODE_PLUGIN_LIVE_ARRAY_FILE) );
-define( 'SCODE_PLUGIN_LOG_FILE', (SCODE_DEBUG_MODE ? SCODE_PLUGIN_DEBUG_LOG_FILE : SCODE_PLUGIN_LIVE_LOG_FILE) );
-
 function shortcode_creator_plugin() {
 	
-	if (file_exists(SCODE_PLUGIN_DIR . 'GitHubPluginUpdater.php')) {
-		require_once( SCODE_PLUGIN_DIR . 'GitHubPluginUpdater.php' );
+	if (file_exists(SCODE_PLUGIN_DIR . 'includes/GitHubPluginUpdater.php')) {
 		if ( is_admin() ) {
+			require_once( SCODE_PLUGIN_DIR . 'includes/GitHubPluginUpdater.php' );
 			new GitHubPluginUpdater( __FILE__, 'mic1780', "shortcode-creator" );
 		}//END IF
 	}//END IF
 	
 	/**
 	if (! file_exists(SCODE_PLUGIN_DIR . 'includes/functions.php') ) {
-		exit('ERROR: Could not find Plugin Customizer function file: includes/functions.php');
+		exit('ERROR: Could not find Shortcode Creator function file: includes/functions.php');
 	}//END IF
 	require_once (SCODE_PLUGIN_DIR . 'includes/functions.php');
 	

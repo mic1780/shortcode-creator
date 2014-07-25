@@ -1,0 +1,20 @@
+/* cell padding with padCells class is .2em ~ 13px */
+.textareaCell {
+	min-width: 319px;
+	width: 319px;
+}
+.maxTextareaCell {
+	min-width: 200px;
+	max-width: 319px;
+}
+.textCell {
+	min-width: 100px;
+	max-width: 191px;
+}
+.selectCell {
+	min-width: 52px;
+	max-width: 52px;
+}
+textarea[readonly], input[type="text"][readonly] {
+	background-color: #ddd;
+}

@@ -1,0 +1,27 @@
+pre {
+	margin: 0;
+}
+
+/**************** Some classes to reduce table overhead ********************/
+/* classes vt, vm, vb short for valign top, middle, and bottom */
+.vt {vertical-align:top;}
+.vm {vertical-align:middle;}
+.vb {vertical-align:bottom;}
+/* class b short for border */
+.b {
+	border:1px solid black;
+}
+/* classes l, c, and r short for left, center, and right */
+.l {text-align:left;}
+.c {text-align:center;}
+.r {text-align:right;}
+
+.dn {
+	display: none;
+}
+
+.ct { margin-left: auto; margin-right: auto; }
+/*********** Full table cell padding ************/
+.padCells thead tr th, .padCells tbody tr td, .padCells tfoot tr td {
+	padding: 1px .5em;
+}

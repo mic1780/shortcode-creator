@@ -1,0 +1,20 @@
+#handlerContainer {
+	background-color: white;
+	box-shadow: 3px 3px lightgray;
+	height: 50px;
+	margin: 20px auto;
+	position: absolute;
+	right: 5%;
+	text-align: center;
+	width: 80%;
+}
+#errorText, #successText {
+	font-size: 14px;
+	padding-top: 10px;
+}
+#errorText {
+	color: red;
+}
+#successText {
+	color: green;
+}
