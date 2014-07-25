@@ -9,7 +9,7 @@ if (! defined('SCODE_VERSION') ) {
 
 //Credit to tutsplus for most of this code
 //http://code.tutsplus.com/tutorials/distributing-your-plugins-in-github-with-automatic-updates--wp-34817
-class GitHubPluginUpdater {
+class scodePluginUpdater {
 	
 	private $slug; // plugin slug
 	private $pluginData; // plugin data

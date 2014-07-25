@@ -14,7 +14,7 @@ function scode_get_tags_to_change() {
 	return array('script');
 }//END FUNCTION
 
-function add_stylesheet( $hook = '', $name = '' ) {
+function scode_add_stylesheet( $hook = '', $name = '' ) {
 	$css_path =	'includes/css/';
 	
 	//do nothing with empty arguments
@@ -31,7 +31,7 @@ function add_stylesheet( $hook = '', $name = '' ) {
 	wp_enqueue_style( $hook );
 }//END FUNCTION
 
-function add_script( $hook = '', $name = '' ) {
+function scode_add_script( $hook = '', $name = '' ) {
 	$script_path =	'includes/js/';
 	
 	//do nothing with empty arguments
@@ -48,6 +48,7 @@ function add_script( $hook = '', $name = '' ) {
 	wp_enqueue_script( $hook );
 }//END FUNCTION
 
+if (! function_exists('echo_print_r'))
 function echo_print_r($array = array(), $return = false) {
 	$output =	'<pre>' . print_r($array, true) . '</pre>';
 		

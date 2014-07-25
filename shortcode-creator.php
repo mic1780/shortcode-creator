@@ -42,10 +42,10 @@ define( 'SCODE_PLUGIN_SUCCESS_HANDLERS', SCODE_PLUGIN_DIR . 'pages/successHandle
 
 function shortcode_creator_plugin() {
 	
-	if (file_exists(SCODE_PLUGIN_DIR . 'includes/GitHubPluginUpdater.php')) {
+	if (file_exists(SCODE_PLUGIN_DIR . 'includes/scodePluginUpdater.php')) {
 		if ( is_admin() ) {
-			require_once( SCODE_PLUGIN_DIR . 'includes/GitHubPluginUpdater.php' );
-			new GitHubPluginUpdater( __FILE__, 'mic1780', "shortcode-creator" );
+			require_once( SCODE_PLUGIN_DIR . 'includes/scodePluginUpdater.php' );
+			new scodePluginUpdater( __FILE__, 'mic1780', "shortcode-creator" );
 		}//END IF
 	}//END IF
 	
@@ -55,7 +55,7 @@ function shortcode_creator_plugin() {
 	}//END IF
 	require_once (SCODE_PLUGIN_DIR . 'includes/functions.php');
 	
-	add_stylesheet('scode_stylesheet', 'style.css');
+	scode_add_stylesheet('scode_stylesheet', 'style.css');
 	
 	// Only load the Admin class on admin requests, excluding AJAX.
 	if( is_admin() && ( false === defined( 'DOING_AJAX' ) || false === DOING_AJAX ) ) {
