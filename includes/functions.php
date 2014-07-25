@@ -48,16 +48,32 @@ function scode_add_script( $hook = '', $name = '' ) {
 	wp_enqueue_script( $hook );
 }//END FUNCTION
 
-if (! function_exists('echo_print_r'))
-function echo_print_r($array = array(), $return = false) {
-	$output =	'<pre>' . print_r($array, true) . '</pre>';
+if (! function_exists('echo_print_r')) {
+	function echo_print_r($array = array(), $return = false) {
+		$output =	'<pre>' . print_r($array, true) . '</pre>';
+			
+		if ($return === false) {
+			echo	$output;
+		} else {
+			return	$output;
+		}//END IF
 		
-	if ($return === false) {
-		echo	$output;
-	} else {
-		return	$output;
+	}//END FUNCTION
+}//END IF
+
+function scode_apply_all_codes() {
+	$codePath =	'includes/shortcodes/';
+	$allFiles =	glob(SCODE_PLUGIN_DIR . $codePath . '*.php');
+	$fileName =	'';
+	if (count($allFiles) > 0) {
+		foreach ($allFiles as $key => $file) {
+			$fileName =	end(explode('/', $file));
+			if ($fileName == 'index.php')
+				continue;
+			else
+				require_once($file);
+		}//END FOREACH LOOP
 	}//END IF
-	
 }//END FUNCTION
 
 /*
