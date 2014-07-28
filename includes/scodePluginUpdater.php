@@ -22,7 +22,7 @@ class scodePluginUpdater {
 	
 	function __construct( $pluginFile, $gitHubUsername, $gitHubProjectName, $accessToken = '' ) {
 		add_filter( "pre_set_site_transient_update_plugins", array( $this, "setTransitent" ) );
-		add_filter( "plugins_api", array( $this, "setPluginInfo" ), 10, 3 );
+		add_filter( "plugins_api", array( $this, "setPluginInfo" ), 11, 3 );
 		add_filter( "upgrader_post_install", array( $this, "postInstall" ), 10, 3 );
 		add_filter( "upgrader_pre_install", array( $this, "preInstall" ), 9, 2 );
 		
@@ -114,6 +114,7 @@ class scodePluginUpdater {
 		$response->last_updated = $this->githubAPIResult->published_at;
 		$response->slug = $this->slug;
 		$response->plugin_name  = $this->pluginData["Name"];
+		$response->name  = $this->pluginData["Name"];
 		$response->version = $this->githubAPIResult->tag_name;
 		$response->author = $this->pluginData["AuthorName"];
 		$response->homepage = $this->pluginData["PluginURI"];
