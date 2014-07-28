@@ -170,6 +170,10 @@ class scodePluginUpdater {
 		$this->initPluginData();
 		$this->pluginActive =	is_plugin_active( $this->slug );
 		
+		//we need to keep our custom shortcodes intact
+		global $wp_filesystem;
+		$wp_filesystem->move( SCODE_PLUGIN_DIR . 'includes/shortcodes', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'scode_temp');
+		
 		return true;
 	}//END PUBLIC FUNCTION
 	
@@ -184,6 +188,9 @@ class scodePluginUpdater {
 		$pluginFolder = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . dirname( $this->slug );
 		$wp_filesystem->move( $result['destination'], $pluginFolder );
 		$result['destination'] = $pluginFolder;
+		
+		//move back our custom files
+		$wp_filesystem->move(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'scode_temp', SCODE_PLUGIN_DIR . 'includes/shortcodes');
 		
 		// Re-activate plugin if needed
 		if ( $this->pluginActive ) {

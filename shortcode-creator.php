@@ -4,7 +4,7 @@
 	Plugin URI: https://github.com/mic1780/shortcode-creator
 	Description: This is a custom plugin that lets you create your own shortcodes.
 	Author: Michael Cummins
-	Version: 0.0.3
+	Version: 0.0.4
 	Author URI: https://github.com/mic1780/
 	Text Domain: 
  */
@@ -31,7 +31,7 @@ if( ! defined('ABSPATH') ) {
 	exit;
 }//END IF
 
-define( 'SCODE_VERSION', '0.0.3' );
+define( 'SCODE_VERSION', '0.0.4' );
 define( 'SCODE_PLUGIN_FILE', __FILE__ );
 define( 'SCODE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SCODE_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
@@ -54,15 +54,13 @@ function shortcode_creator_plugin() {
 	}//END IF
 	require_once (SCODE_PLUGIN_DIR . 'includes/functions.php');
 	
-	/**
 	// Only load the Admin class on admin requests, excluding AJAX.
 	if( is_admin() && ( false === defined( 'DOING_AJAX' ) || false === DOING_AJAX ) ) {
 		// Initialize Admin Class
 		scode_add_stylesheet('scode_stylesheet', 'style.css');
-		require_once SCODE_PLUGIN_DIR . 'includes/classes/admin.php';
+		require_once(SCODE_PLUGIN_DIR . 'includes/classes/admin.php');
 		new SCODE_Admin();
 	}//END IF
-	/**/
 	
 	if ((! is_admin()) && ( false === defined( 'DOING_AJAX' ) || false === DOING_AJAX ) ) {
 		scode_apply_all_codes();

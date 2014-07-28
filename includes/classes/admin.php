@@ -29,15 +29,15 @@ class SCODE_Admin {
 	
 	public function build_menu() {
 		$required_cap = apply_filters('scode_settings_cap', 'manage_options');
-		add_menu_page('Shortcode Creator', 'Shortcode Creator', $required_cap, 'scode-creator', array ($this, 'get_customizer_page') );
+		add_menu_page('Shortcode Creator', 'Shortcode Creator', $required_cap, 'scode-creator', array ($this, 'get_create_page') );
 		
 		//add submenu pages
-		add_submenu_page('scode-creator', 'Create - Shortcode Creator', 'Create', $required_cap, 'scode-creator', array($this, 'get_customizer_page') );
+		add_submenu_page('scode-creator', 'Create - Shortcode Creator', 'Create', $required_cap, 'scode-creator', array($this, 'get_create_page') );
 		add_submenu_page('scode-creator', 'Settings - Shortcode Creator', 'Settings', $required_cap, 'scode-creator-settings', array($this, 'get_settings_page') );
 	}//END FUNCTION
 	
-	public function get_customizer_page() {
-		require( SCODE_PLUGIN_DIR . 'pages/customizer.php' );
+	public function get_create_page() {
+		require( SCODE_PLUGIN_DIR . 'pages/create.php' );
 	}//END PUBLIC FUNCTION
 	
 	public function get_settings_page() {
