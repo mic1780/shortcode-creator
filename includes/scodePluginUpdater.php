@@ -176,9 +176,30 @@ class scodePluginUpdater {
 		$this->initPluginData();
 		$this->pluginActive =	is_plugin_active( $this->slug );
 		
+		if ( isset($_GET['plugin']) && $_GET['plugin'] != $this->slug )
+			return true;
+		
 		//we need to keep our custom shortcodes intact
-		global $wp_filesystem;
-		$wp_filesystem->move( SCODE_PLUGIN_DIR . 'includes/shortcodes', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'scode_temp');
+		$allFiles =	array();
+		$fileList = glob(SCODE_PLUGIN_DIR . 'includes/shortcodes/*.php');
+		if (count($fileList) > 0) {
+			foreach ($fileList as $filename) {
+				if (end( explode('/', $filename) ) != 'index.php')
+					$allFiles[] =	$filename;
+			}//END FOREACH LOOP
+		}//END IF
+		
+		if (count($allFiles) > 0) {
+			global $wp_filesystem;
+			$contentdir =	trailingslashit( $wp_filesystem->wp_content_dir() );
+			$wp_filesystem->mkdir( $contentdir . 'scode-temp' );
+			foreach ($allFiles as $filepath) {
+				$fileName = end( explode('/', $filepath) );
+				$wp_filesystem->copy( $filepath, $contentdir . 'scode-temp/' . $fileName );
+			}//END FOREACH LOOP
+		}//END IF
+		
+		//$wp_filesystem->move( SCODE_PLUGIN_DIR . 'includes/shortcodes', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'scode_temp');
 		
 		return true;
 	}//END PUBLIC FUNCTION
@@ -188,6 +209,9 @@ class scodePluginUpdater {
 		// Get plugin information
 		$this->initPluginData();
 		
+		if ( isset($_GET['plugin']) && $_GET['plugin'] != $this->slug )
+			return $result;
+		
 		// Since we are hosted in GitHub, our plugin folder would have a dirname of
 		// reponame-tagname change it to our original one:
 		global $wp_filesystem;
@@ -196,7 +220,7 @@ class scodePluginUpdater {
 		$result['destination'] = $pluginFolder;
 		
 		//move back our custom files
-		$wp_filesystem->move(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'scode_temp', SCODE_PLUGIN_DIR . 'includes/shortcodes');
+		//$wp_filesystem->move(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'scode_temp', SCODE_PLUGIN_DIR . 'includes/shortcodes');
 		
 		// Re-activate plugin if needed
 		if ( $this->pluginActive ) {
