@@ -1,5 +1,7 @@
 #ignore all files
 *
-#except this one and index.php
+#except this one
 !.gitignore
+#also do not ignore index.php or format.php
 !index.php
+!format.php

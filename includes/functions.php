@@ -68,7 +68,7 @@ function scode_apply_all_codes() {
 	if (count($allFiles) > 0) {
 		foreach ($allFiles as $key => $file) {
 			$fileName =	end(explode('/', $file));
-			if ($fileName == 'index.php')
+			if ($fileName == 'index.php' || $fileName == 'format.php')
 				continue;
 			else
 				require_once($file);

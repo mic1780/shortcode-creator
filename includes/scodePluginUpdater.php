@@ -184,7 +184,7 @@ class scodePluginUpdater {
 		$fileList = glob(SCODE_PLUGIN_DIR . 'includes/shortcodes/*.php');
 		if (count($fileList) > 0) {
 			foreach ($fileList as $filename) {
-				if (end( explode('/', $filename) ) != 'index.php')
+				if (end( explode('/', $filename) ) != 'index.php' && end( explode('/', $filename) ) != 'format.php')
 					$allFiles[] =	$filename;
 			}//END FOREACH LOOP
 		}//END IF
