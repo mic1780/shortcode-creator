@@ -57,7 +57,6 @@ function shortcode_creator_plugin() {
 	// Only load the Admin class on admin requests, excluding AJAX.
 	if( is_admin() && ( false === defined( 'DOING_AJAX' ) || false === DOING_AJAX ) ) {
 		// Initialize Admin Class
-		scode_add_stylesheet('scode_stylesheet', 'style.css');
 		require_once(SCODE_PLUGIN_DIR . 'includes/classes/admin.php');
 		new SCODE_Admin();
 	}//END IF
