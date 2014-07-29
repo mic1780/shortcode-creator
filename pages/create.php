@@ -9,7 +9,8 @@ if (! defined('SCODE_VERSION') ) {
 global $nL;
 
 scode_add_stylesheet('scode_stylesheet', 'style.css');
-scode_add_script('scode_general_settings', 'general_settings.js');
+scode_add_script('scode_create', 'create.js');
+//scode_add_script('scode_general_settings', 'general_settings.js');
 
 //glob the shortcode files and parse the contents.
 
@@ -29,7 +30,7 @@ scode_add_script('scode_general_settings', 'general_settings.js');
 		New Shortcode
 	</h2>
 	<form action="<?php echo $this->page; ?>&pa=create" method="post">
-		<table>
+		<table class="padCells">
 			<thead>
 				<tr>
 					<th>Name</th>
