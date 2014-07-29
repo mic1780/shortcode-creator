@@ -35,7 +35,8 @@ class scodePluginUpdater {
 	// Get information regarding our plugin from WordPress
 	private function initPluginData() {
 		$this->slug = plugin_basename( $this->pluginFile );
-		$this->pluginData = get_plugin_data( $this->pluginFile );
+		if (file_exists($this->pluginFile))
+			$this->pluginData = get_plugin_data( $this->pluginFile );
 	}//END PRIVATE FUNCTION
 	
 	// Get information regarding our plugin from GitHub
@@ -68,7 +69,7 @@ class scodePluginUpdater {
 	// Push in plugin version information to get the update notification
 	public function setTransitent( $transient ) {
 		// If we have checked the plugin data before, don't re-check
-		if ( empty( $transient->checked ) ) {
+		if ( empty( $transient->checked ) || ! file_exists($this->pluginFile) ) {
 			return $transient;
 		}//END IF
 		
