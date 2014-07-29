@@ -6,6 +6,13 @@ if (! defined('SCODE_VERSION') ) {
 	exit;
 }//END IF
 
+global $nL;
+
+scode_add_script('scode_general_settings', 'general_settings.js');
+
+//glob the shortcode files and parse the contents.
+
+
 ?>
 
 <div id="scode-admin">
@@ -15,4 +22,7 @@ if (! defined('SCODE_VERSION') ) {
 		<?php echo get_admin_page_title(); ?>
 	</h1>
 	<hr>
+	<h2>
+		Current Shortcodes
+	</h2>
 </div>

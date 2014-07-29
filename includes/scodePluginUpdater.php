@@ -76,6 +76,10 @@ class scodePluginUpdater {
 		$this->initPluginData();
 		$this->getRepoReleaseInfo();
 		
+		if ( isset( $_GET['force-check'] ) && '1' === $_GET['force-check'] ) {
+			$transient->checked[$this->slug] = SCODE_VERSION;
+		}//END IF
+		
 		// Check the versions if we need to do an update
 		$doUpdate = version_compare( $this->githubAPIResult->tag_name, $transient->checked[$this->slug] );
 		
