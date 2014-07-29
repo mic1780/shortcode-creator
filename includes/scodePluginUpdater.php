@@ -220,6 +220,17 @@ class scodePluginUpdater {
 		$result['destination'] = $pluginFolder;
 		
 		//move back our custom files
+		$contentdir =	trailingslashit( $wp_filesystem->wp_content_dir() );
+		if ( file_exists($contentdir . 'scode-temp') ) {
+			$files =	glob($contentdir . 'scode-temp/*.php');
+			if (count($files) > 0) {
+				foreach ($files as $filepath) {
+					$fileName =	end( explode('/', $filepath) );
+					$wp_filesystem->move( $filepath, SCODE_PLUGIN_DIR . 'includes/shortcodes/' . $fileName );
+				}//END FOREACH LOOP
+			}//END IF
+			$wp_filesystem->rmdir( $contentdir . 'scode-temp' );
+		}//END IF
 		//$wp_filesystem->move(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'scode_temp', SCODE_PLUGIN_DIR . 'includes/shortcodes');
 		
 		// Re-activate plugin if needed
