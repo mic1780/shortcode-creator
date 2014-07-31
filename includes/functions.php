@@ -180,7 +180,7 @@ function scode_read_code_files(&$scodeArray) {
 				//'funcString' => $funcString,
 				'Attributes' => implode($nL, $attributeArray),
 				'AttrDefaults' => implode($nL, $defaultsArray),
-				'FunctionCode' => implode($nL, $funcLines)
+				'FunctionCode' => rtrim(implode($nL, $funcLines))
 			);
 			
 			unset($content, $attributeArray, $defaultsArray, $funcLines);
