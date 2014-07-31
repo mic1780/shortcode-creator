@@ -31,7 +31,7 @@ function scode_add_stylesheet( $hook = '', $name = '' ) {
 	wp_enqueue_style( $hook );
 }//END FUNCTION
 
-function scode_add_script( $hook = '', $name = '' ) {
+function scode_add_script( $hook = '', $name = '', $deps = array() ) {
 	$script_path =	'includes/js/';
 	
 	//do nothing with empty arguments
@@ -44,7 +44,7 @@ function scode_add_script( $hook = '', $name = '' ) {
 		return;
 	}//END IF
 	
-	wp_register_script( $hook, SCODE_PLUGIN_URL . $script_path . $name );
+	wp_register_script( $hook, SCODE_PLUGIN_URL . $script_path . $name, $deps, SCODE_VERSION, false );
 	wp_enqueue_script( $hook );
 }//END FUNCTION
 

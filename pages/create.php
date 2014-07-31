@@ -14,15 +14,14 @@ if (file_exists( SCODE_PLUGIN_DIR . 'includes/shortcodes/scode_test.php' )) {
 global $nL;
 
 scode_add_stylesheet('scode_stylesheet', 'style.css');
-scode_add_script('scode_create', 'create.js');
-//scode_add_script('scode_general_settings', 'general_settings.js');
+scode_add_script('scode_create', 'create.js', array('jquery-core'));
 
 //glob the shortcode files and parse the contents.
 
 ?>
 <div id="scode-admin">
-	<!--Success handler include here-->
-	<!--Error handler include here-->
+	<?php require( SCODE_PLUGIN_DIR . 'pages/successHandlers.php' ); ?>
+	<?php require( SCODE_PLUGIN_DIR . 'pages/errorHandlers.php' ); ?>
 	<h1>
 		<?php echo get_admin_page_title(); ?>
 	</h1>
