@@ -60,7 +60,7 @@ switch (strtolower($pa)) {
 		//next we add in our function code
 		if (strlen($codeInfo['FunctionCode']) > 0) {
 			$replaceCode =		"\t//function code here" . $nL;
-			$replaceCode .=	"\t" . str_replace( $nL, $nL . "\t", str_replace("\t", "", scode_format_code($codeInfo['FunctionCode'], 'write')) );
+			$replaceCode .=	"\t" . str_replace( $nL, $nL . "\t", scode_format_code($codeInfo['FunctionCode'], 'write') );
 			$format =	str_replace("\t//function code here", $replaceCode, $format);
 		}//END IF
 		

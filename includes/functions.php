@@ -6,9 +6,10 @@ if (! defined('SCODE_VERSION') ) {
 	exit;
 }//END IF
 
-global $nL;
+global $nL, $excludeThese;
 $nL =	'
 ';
+$excludeThese =	array('index.php', 'format.php');
 
 function scode_get_tags_to_change() {
 	return array('script');
@@ -62,13 +63,14 @@ if (! function_exists('echo_print_r')) {
 }//END IF
 
 function scode_apply_all_codes() {
+	global $excludeThese;
 	$codePath =	'includes/shortcodes/';
 	$allFiles =	glob(SCODE_PLUGIN_DIR . $codePath . '*.php');
 	$fileName =	'';
 	if (count($allFiles) > 0) {
 		foreach ($allFiles as $key => $file) {
 			$fileName =	end(explode('/', $file));
-			if ($fileName == 'index.php' || $fileName == 'format.php')
+			if (in_array($fileName, $excludeThese))
 				continue;
 			else
 				require_once($file);
@@ -110,5 +112,82 @@ function scode_format_code($code, $rw) {
 	
 	$output =	preg_replace("/".$charOpen."(\/?)(?!')".$regexTagsToChange."([^\n\r".$charClose."]*)".$charClose."/", $replaceOpen."$1$2".$replaceClose, $code);
 	return	$output;
+}//END FUNCTION
+
+function scode_read_code_files(&$scodeArray) {
+	global $nL, $excludeThese;
+	$codePath =	'includes/shortcodes/';
+	$allFiles =	glob( SCODE_PLUGIN_DIR . $codePath . '*.php' );
+	$allFiles =	json_decode(str_replace( SCODE_PLUGIN_DIR . $codePath, '', stripslashes(json_encode($allFiles)) ));
+	
+	$scodeFiles =	array();
+	foreach($allFiles as $fileName) {
+		if (in_array($fileName, $excludeThese))
+			continue;
+		$scodeFiles[] =	$fileName;
+	}//END FOREACH LOOP
+	unset($allFiles);
+	
+	//we have a list of all valid shortcode files. lets retrieve their data
+	//the positions of our data we need vary depending on how the user created the shortcode.
+	//so we need the positions of when attributes and function code start and end
+	//lets get to it
+	
+	//needs some constants
+	$addToAtt =		strlen('shortcode_atts(array(');
+	$addToFunc =	strlen("\t//function code here".$nL);
+	
+	if (count($scodeFiles) > 0) {
+		foreach ($scodeFiles as $key => $fileName) {
+			$attributeArray =	array();
+			$defaultsArray =	array();
+			$funcLines =		array();
+			$name =	rtrim($fileName, '.php');
+			//get file
+			$content =	file_get_contents( SCODE_PLUGIN_DIR . $codePath . $fileName );
+			
+			//parse the attributes
+			$attStart =		strpos($content, 'shortcode_atts(array(') + $addToAtt;
+			$attLen =		strpos($content, '), $atts);') - $attStart;
+			
+			if ($attLen > 0) {
+				$attLines =	explode($nL, substr($content, $attStart, $attLen));
+				$attCount =	count($attLines) - 2;
+				for ($i=1; $i <= $attCount; $i++) {
+					list($attribute, $value) =	explode(' => ', $attLines[$i]);
+					$attributeArray[] =	trim(ltrim($attribute), "'");
+					$defaultsArray[] =	substr($value, 1, strlen($value)-3);
+				}//END FOR LOOP
+			}//END IF
+			
+			//parse for function code
+			$funcStart =	strpos($content, "\t//function code here".$nL) + $addToFunc;
+			$funcLen =		strpos($content, "\treturn 'Shortcode ".$name) - $funcStart;
+			
+			if ($funcLen > 0) {
+				$funcLines =	explode($nL, substr($content, $funcStart, $funcLen));
+				$lineCount =	count($funcLines);
+				for ($i=0; $i < $lineCount; $i++) {
+					$funcLines[$i] =	substr($funcLines[$i], 1, strlen($funcLines[$i])-1);//removed first tab from code that we add to the file
+				}//END FOR LOOP
+			}//END IF
+			
+			//add a node to the array passed in
+			$scodeArray[] =	array(
+				'Name' => $name,
+				//'funcStart' => sprintf("%d", $funcStart),
+				//'funcLen' => sprintf("%d", $funcLen),
+				//'funcString' => $funcString,
+				'Attributes' => implode($nL, $attributeArray),
+				'AttrDefaults' => implode($nL, $defaultsArray),
+				'FunctionCode' => implode($nL, $funcLines)
+			);
+			
+			unset($content, $attributeArray, $defaultsArray, $funcLines);
+		}//END FOREACH LOOP
+	}//END IF
+	
+	
+	return true;
 }//END FUNCTION
 ?>
