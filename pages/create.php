@@ -6,6 +6,11 @@ if (! defined('SCODE_VERSION') ) {
 	exit;
 }//END IF
 
+//if we have a shortcode we want to test, we need to add it to our shortcodes
+if (file_exists( SCODE_PLUGIN_DIR . 'includes/shortcodes/scode_test.php' )) {
+	require_once( SCODE_PLUGIN_DIR . 'includes/shortcodes/scode_test.php' );
+}//END IF
+
 global $nL;
 
 scode_add_stylesheet('scode_stylesheet', 'style.css');
@@ -55,6 +60,18 @@ scode_add_script('scode_create', 'create.js');
 					</td>
 				</tr>
 			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="100%" class="vt c">
+						<input type="submit" name="submit" value="Create" />
+					</td>
+				</tr>
+			</tfoot>
 		</table>
 	</form>
+	<hr>
+	<h2>Test A Shortcode</h2>
+	<div id="scodeTestArea">
+		<?php if (shortcode_exists('scode_test')) { echo do_shortcode('[scode_test]'); } ?>
+	</div>
 </div>
