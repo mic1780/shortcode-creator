@@ -79,9 +79,8 @@ class scodePluginUpdater {
 				$this->githubAPIResult->body =	file_get_contents(SCODE_PLUGIN_DIR . 'changes.txt');
 				return;
 			}//END IF
-		} else {
-			$etag =	$this->githubAPIHeaders['etag'];
 		}//END IF
+		$etag =	$this->githubAPIHeaders['etag'];
 		
 		if ( ! empty( $this->githubAPIResult ) ) {
 			$this->githubAPIResult = @json_decode( $this->githubAPIResult );
