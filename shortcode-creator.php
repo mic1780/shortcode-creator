@@ -4,7 +4,7 @@
 	Plugin URI: https://github.com/mic1780/shortcode-creator
 	Description: This is a custom plugin that lets you create your own shortcodes.
 	Author: Michael Cummins
-	Version: 1.1.0
+	Version: 1.1.1
 	Author URI: https://github.com/mic1780/
 	Text Domain: 
  */
@@ -31,7 +31,7 @@ if( ! defined('ABSPATH') ) {
 	exit;
 }//END IF
 
-define( 'SCODE_VERSION', '1.1.0' );
+define( 'SCODE_VERSION', '1.1.1' );
 define( 'SCODE_PLUGIN_FILE', __FILE__ );
 define( 'SCODE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SCODE_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
