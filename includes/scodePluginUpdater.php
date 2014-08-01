@@ -17,6 +17,8 @@ class scodePluginUpdater {
 	private $repo; // GitHub repo name
 	private $pluginFile; // __FILE__ of our plugin
 	private $pluginActive;
+	private $githubAPIRequest;
+	private $githubAPIHeaders;
 	private $githubAPIResult; // holds data from GitHub
 	private $accessToken; // GitHub private repo token
 	
@@ -41,6 +43,8 @@ class scodePluginUpdater {
 	
 	// Get information regarding our plugin from GitHub
 	private function getRepoReleaseInfo() {
+		$nL = '
+';
 		// Only do this once
 		if ( ! empty( $this->githubAPIResult ) ) {
 			return;
@@ -54,15 +58,47 @@ class scodePluginUpdater {
 			$url = add_query_arg( array( "access_token" => $this->accessToken ), $url );
 		}//END IF
 		
+		if (file_exists(SCODE_PLUGIN_DIR . 'etag.txt')) {
+			list($etag, $version, $zipball) = explode($nL, file_get_contents(SCODE_PLUGIN_DIR . 'etag.txt'));
+		}//END IF
+		
 		// Get the results
-		$this->githubAPIResult = wp_remote_retrieve_body( wp_remote_get( $url ) );
+		if (isset($etag)) {
+			$this->githubAPIRequest = wp_remote_get( $url, array('headers' => array('If-None-Match' => $etag)) );
+		} else {
+			$this->githubAPIRequest = wp_remote_get( $url );
+		}//END IF
+		
+		$this->githubAPIHeaders =	wp_remote_retrieve_headers( $this->githubAPIRequest );
+		$this->githubAPIResult = wp_remote_retrieve_body( $this->githubAPIRequest );
+		
+		if (isset($etag)) {
+			if (wp_remote_retrieve_response_code($this->githubAPIRequest) == '304') {
+				$this->githubAPIResult->tag_name =	$version;
+				$this->githubAPIResult->zipball_url = $zipball;
+				$this->githubAPIResult->body =	file_get_contents(SCODE_PLUGIN_DIR . 'changes.txt');
+				return;
+			}//END IF
+		} else {
+			$etag =	$this->githubAPIHeaders['etag'];
+		}//END IF
+		
 		if ( ! empty( $this->githubAPIResult ) ) {
 			$this->githubAPIResult = @json_decode( $this->githubAPIResult );
 		}//END IF
 		
 		// Use only the latest release
 		if ( is_array( $this->githubAPIResult ) ) {
-			$this->githubAPIResult = $this->githubAPIResult[0];
+			$newestResult = $this->githubAPIResult[0];
+			for ($i=1; $i < count($this->githubAPIResult); $i++) {
+				if (version_compare( $this->githubAPIResult[$i]->tag_name, $newestResult->tag_name ) == 1)
+					$newestResult = $this->githubAPIResult[$i];
+			}
+			$this->githubAPIResult = $newestResult;
+			$version =	$this->githubAPIResult->tag_name;
+			$zipball =	$this->githubAPIResult->zipball_url;
+			file_put_contents(SCODE_PLUGIN_DIR . 'etag.txt', $etag . $nL . $version . $nL . $zipball, LOCK_EX);
+			file_put_contents(SCODE_PLUGIN_DIR . 'changes.txt', str_replace('\r\n', $nL, $this->githubAPIResult->body), LOCK_EX);
 		}//END IF
 	}//END PRIVATE FUNCTION
 	
@@ -76,6 +112,7 @@ class scodePluginUpdater {
 		// Get plugin & GitHub release information
 		$this->initPluginData();
 		$this->getRepoReleaseInfo();
+		
 		
 		if ( isset( $_GET['force-check'] ) && '1' === $_GET['force-check'] ) {
 			$transient->checked[$this->slug] = SCODE_VERSION;
@@ -189,17 +226,19 @@ class scodePluginUpdater {
 			}//END FOREACH LOOP
 		}//END IF
 		
+		global $wp_filesystem;
+		$contentdir =	trailingslashit( $wp_filesystem->wp_content_dir() );
+		$wp_filesystem->mkdir( $contentdir . 'scode-temp' );
+		if (file_exists(SCODE_PLUGIN_DIR . 'etag.txt'))
+			$wp_filesystem->copy(SCODE_PLUGIN_DIR . 'etag.txt', $contentdir . 'scode-temp/etag.txt');
+		if (file_exists(SCODE_PLUGIN_DIR . 'changes.txt'))
+			$wp_filesystem->copy(SCODE_PLUGIN_DIR . 'changes.txt', $contentdir . 'scode-temp/changes.txt');
 		if (count($allFiles) > 0) {
-			global $wp_filesystem;
-			$contentdir =	trailingslashit( $wp_filesystem->wp_content_dir() );
-			$wp_filesystem->mkdir( $contentdir . 'scode-temp' );
 			foreach ($allFiles as $filepath) {
 				$fileName = end( explode('/', $filepath) );
 				$wp_filesystem->copy( $filepath, $contentdir . 'scode-temp/' . $fileName );
 			}//END FOREACH LOOP
 		}//END IF
-		
-		//$wp_filesystem->move( SCODE_PLUGIN_DIR . 'includes/shortcodes', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'scode_temp');
 		
 		return true;
 	}//END PUBLIC FUNCTION
@@ -222,6 +261,11 @@ class scodePluginUpdater {
 		//move back our custom files
 		$contentdir =	trailingslashit( $wp_filesystem->wp_content_dir() );
 		if ( file_exists($contentdir . 'scode-temp') ) {
+			if (file_exists($contentdir . 'scode-temp/etag.txt'))
+				$wp_filesystem->move( $contentdir . 'scode-temp/etag.txt', SCODE_PLUGIN_DIR . 'etag.txt' );
+			if (file_exists($contentdir . 'scode-temp/changes.txt'))
+				$wp_filesystem->move( $contentdir . 'scode-temp/changes.txt', SCODE_PLUGIN_DIR . 'changes.txt' );
+			
 			$files =	glob($contentdir . 'scode-temp/*.php');
 			if (count($files) > 0) {
 				foreach ($files as $filepath) {
@@ -231,7 +275,6 @@ class scodePluginUpdater {
 			}//END IF
 			$wp_filesystem->rmdir( $contentdir . 'scode-temp' );
 		}//END IF
-		//$wp_filesystem->move(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'scode_temp', SCODE_PLUGIN_DIR . 'includes/shortcodes');
 		
 		// Re-activate plugin if needed
 		if ( $this->pluginActive ) {

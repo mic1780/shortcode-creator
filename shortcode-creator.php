@@ -4,7 +4,7 @@
 	Plugin URI: https://github.com/mic1780/shortcode-creator
 	Description: This is a custom plugin that lets you create your own shortcodes.
 	Author: Michael Cummins
-	Version: 1.0.1
+	Version: 1.0.2
 	Author URI: https://github.com/mic1780/
 	Text Domain: 
  */
@@ -31,7 +31,7 @@ if( ! defined('ABSPATH') ) {
 	exit;
 }//END IF
 
-define( 'SCODE_VERSION', '1.0.1' );
+define( 'SCODE_VERSION', '1.0.2' );
 define( 'SCODE_PLUGIN_FILE', __FILE__ );
 define( 'SCODE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SCODE_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
@@ -41,13 +41,6 @@ define( 'SCODE_PLUGIN_URL', plugins_url( '/', __FILE__ ) );
 //define( 'SCODE_PLUGIN_SUCCESS_HANDLERS', SCODE_PLUGIN_DIR . 'pages/successHandlers.php' );
 
 function shortcode_creator_plugin() {
-	
-	if (file_exists(SCODE_PLUGIN_DIR . 'includes/scodePluginUpdater.php')) {
-		if ( is_admin() ) {
-			require_once( SCODE_PLUGIN_DIR . 'includes/scodePluginUpdater.php' );
-			new scodePluginUpdater( __FILE__, 'mic1780', "shortcode-creator" );
-		}//END IF
-	}//END IF
 	
 	if (! file_exists(SCODE_PLUGIN_DIR . 'includes/functions.php') ) {
 		exit('ERROR: Could not find Shortcode Creator function file: includes/functions.php');
@@ -67,6 +60,7 @@ function shortcode_creator_plugin() {
 	
 }//END FUNCTION
 
+add_action('admin_init', 'scode_upgrade_check');
 add_action('plugins_loaded', 'shortcode_creator_plugin', 10);
 
 //register_activation_hook( __FILE__, 'scode_install_hook');
@@ -85,4 +79,12 @@ function scode_uninstall_hook() {
 	}//END IF
 }//END FUNCTION
 
+function scode_upgrade_check() {
+	if (file_exists(SCODE_PLUGIN_DIR . 'includes/scodePluginUpdater.php')) {
+		if ( is_admin() ) {
+			require_once( SCODE_PLUGIN_DIR . 'includes/scodePluginUpdater.php' );
+			new scodePluginUpdater( __FILE__, 'mic1780', "shortcode-creator" );
+		}//END IF
+	}//END IF
+}//END FUNCTION
 ?>

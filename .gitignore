@@ -1,0 +1,3 @@
+#ignore etag and changes file if we have them
+etag.txt
+changes.txt
