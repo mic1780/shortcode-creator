@@ -166,10 +166,6 @@ function scode_read_code_files(&$scodeArray) {
 			
 			if ($funcLen > 0) {
 				$funcLines =	explode($nL, substr($content, $funcStart, $funcLen));
-				$lineCount =	count($funcLines);
-				for ($i=0; $i < $lineCount; $i++) {
-					$funcLines[$i] =	substr($funcLines[$i], 1, strlen($funcLines[$i])-1);//removed first tab from code that we add to the file
-				}//END FOR LOOP
 			}//END IF
 			
 			//add a node to the array passed in
