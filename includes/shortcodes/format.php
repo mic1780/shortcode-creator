@@ -4,6 +4,7 @@
 function name_func( $atts ) {
 	$a = shortcode_atts(array(), $atts);
 	
+	//dependencies here
 	//function code here
 	return 'Shortcode scode_name: No return value in function code.';
 }

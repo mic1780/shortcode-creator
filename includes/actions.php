@@ -43,7 +43,7 @@ switch (strtolower($pa)) {
 		//if we have declared attributes, make sure we have a matching number of defaults
 		$numOfAttr =	substr_count($codeInfo['Attributes'], $nL);
 		$numOfDefault =	substr_count($codeInfo['AttrDefaults'], $nL);
-		if ( ($numOfAttr > 0 && $numOfDefault > 0) && ($numOfAttr === $numOfDefault) ) {
+		if ( (strlen($codeInfo['Attributes']) > 0 && strlen($codeInfo['AttrDefaults']) > 0) && ($numOfAttr === $numOfDefault) ) {
 			$replaceCode =	'shortcode_atts(array(' . $nL;
 			$attrArray =	explode($nL, $codeInfo['Attributes']);
 			$defArray =		explode($nL, $codeInfo['AttrDefaults']);
@@ -54,6 +54,19 @@ switch (strtolower($pa)) {
 			}//END FOREACH LOOP
 			$replaceCode .=	"\t)";
 			$format =	str_replace('shortcode_atts(array()', $replaceCode, $format);
+			unset($replaceCode);
+		}//END IF
+		
+		if (strlen($codeInfo['Deps']) > 0) {
+			$replaceCode =	"\tdependencies here" . $nL;
+			$depArray =	explode($nL, $codeInfo['Deps']);
+			foreach ($depArray as $dependency) {
+				if ( wp_script_is($dependency, 'registered') )
+					$replaceCode .=	"\twp_enqueue_script('{$dependency}');" . $nL;
+				if ($dependency == 'jquery-ui-dialog')
+					$replaceCode .=	"\twp_enqueue_style('wp-jquery-ui-dialog');" . $nL;
+			}//END FOREACH LOOP
+			$format =	str_replace("\t//dependencies here", $replaceCode, $format);
 			unset($replaceCode);
 		}//END IF
 		

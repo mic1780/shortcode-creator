@@ -135,12 +135,14 @@ function scode_read_code_files(&$scodeArray) {
 	
 	//needs some constants
 	$addToAtt =		strlen('shortcode_atts(array(');
+	$addToDep =		strlen("\t//dependencies here".$nL);
 	$addToFunc =	strlen("\t//function code here".$nL);
 	
 	if (count($scodeFiles) > 0) {
 		foreach ($scodeFiles as $key => $fileName) {
 			$attributeArray =	array();
 			$defaultsArray =	array();
+			$depLines =			array();
 			$funcLines =		array();
 			$name =	rtrim($fileName, '.php');
 			//get file
@@ -160,10 +162,20 @@ function scode_read_code_files(&$scodeArray) {
 				}//END FOR LOOP
 			}//END IF
 			
+			$depStart =		strpos($content, "\t//dependencies here".$nL) + $addToDep;
+			$depLen =		strpos($content, "\t//function code here".$nL) - $depStart;
+			if ($depLen > 0) {
+				$depLines =	explode($nL, substr($content, $depStart, $depLen));
+				foreach ($depLines as $key => $dependency) {
+					list($null, $depLines[$key], $null) =	explode("'", $dependency);
+					if ($depLines[$key] == 'wp-jquery-ui-dialog')
+						unset($depLines[$key]);
+				}//END FOREACH LOOP
+			}//END IF
+			
 			//parse for function code
 			$funcStart =	strpos($content, "\t//function code here".$nL) + $addToFunc;
 			$funcLen =		strpos($content, "\treturn 'Shortcode ".$name) - $funcStart;
-			
 			if ($funcLen > 0) {
 				$funcLines =	explode($nL, substr($content, $funcStart, $funcLen));
 			}//END IF
@@ -171,15 +183,13 @@ function scode_read_code_files(&$scodeArray) {
 			//add a node to the array passed in
 			$scodeArray[] =	array(
 				'Name' => $name,
-				//'funcStart' => sprintf("%d", $funcStart),
-				//'funcLen' => sprintf("%d", $funcLen),
-				//'funcString' => $funcString,
 				'Attributes' => implode($nL, $attributeArray),
 				'AttrDefaults' => implode($nL, $defaultsArray),
+				'Deps' => rtrim(implode($nL, $depLines)),
 				'FunctionCode' => rtrim(implode($nL, $funcLines))
 			);
 			
-			unset($content, $attributeArray, $defaultsArray, $funcLines);
+			unset($content, $attributeArray, $defaultsArray, $depLines, $funcLines);
 		}//END FOREACH LOOP
 	}//END IF
 	

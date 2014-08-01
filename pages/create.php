@@ -33,8 +33,11 @@ if (count($shortcodes) > 0) {
 									'<td class="vt">' .
 										$codeInfo['AttrDefaults'] .
 									'</td>' . $nL .
+									'<td class="vt">' .
+										(isset($codeInfo['Deps']) ? $codeInfo['Deps'] : '') .
+									'</td>' . $nL .
 									'<td class="vt l">' . $nL .
-										'<textarea rows="10" cols="35">' . scode_format_code($codeInfo['FunctionCode'], 'read') . '</textarea>' . $nL .
+										'<textarea rows="10" cols="35" readonly="readonly">' . scode_format_code($codeInfo['FunctionCode'], 'read') . '</textarea>' . $nL .
 									'</td>' . $nL .
 								'</tr>' . $nL .
 								'';
@@ -65,6 +68,7 @@ if (count($shortcodes) > 0) {
 				<th>Name</th>
 				<th>Attributes</th>
 				<th>Default Values</th>
+				<th>Dependencies</th>
 				<th>Function Code</th>
 			</tr>
 		</thead>
@@ -83,6 +87,7 @@ if (count($shortcodes) > 0) {
 					<th>Name</th>
 					<th>Attributes</th>
 					<th>Default Values</th>
+					<th><a href="http://codex.wordpress.org/Function_Reference/wp_enqueue_script#Default_Scripts_Included_and_Registered_by_WordPress" target="_blank">Dependencies</a></th>
 					<th>Function code</th>
 				</tr>
 			</thead>
@@ -96,6 +101,9 @@ if (count($shortcodes) > 0) {
 					</td>
 					<td>
 						<textarea name="newCode[AttrDefaults]" placeholder="One per line"></textarea>
+					</td>
+					<td>
+						<textarea name="newCode[Deps]" placeholder="One per line"></textarea>
 					</td>
 					<td>
 						<textarea name="newCode[FunctionCode]" placeholder=""></textarea>
@@ -113,7 +121,9 @@ if (count($shortcodes) > 0) {
 	</form>
 	<hr>
 	<h2>Test A Shortcode</h2>
+	<?php ob_start(NULL, 0, PHP_OUTPUT_HANDLER_CLEANABLE); ?>
 	<div id="scodeTestArea">
 		<?php if (shortcode_exists('scode_test')) { echo do_shortcode('[scode_test]'); } ?>
 	</div>
+	<?php echo do_shortcode( ob_get_clean() ); ?>
 </div>
