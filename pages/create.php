@@ -28,13 +28,13 @@ if (count($shortcodes) > 0) {
 										$codeInfo['Name'] .
 									'</td>' . $nL .
 									'<td class="vt">' .
-										$codeInfo['Attributes'] .
+										nl2br($codeInfo['Attributes']) .
 									'</td>' . $nL .
 									'<td class="vt">' .
-										$codeInfo['AttrDefaults'] .
+										nl2br($codeInfo['AttrDefaults']) .
 									'</td>' . $nL .
 									'<td class="vt">' .
-										(isset($codeInfo['Deps']) ? $codeInfo['Deps'] : '') .
+										(isset($codeInfo['Deps']) ? nl2br($codeInfo['Deps']) : '') .
 									'</td>' . $nL .
 									'<td class="vt l">' . $nL .
 										'<textarea rows="10" cols="35" readonly="readonly">' . scode_format_code($codeInfo['FunctionCode'], 'read') . '</textarea>' . $nL .
