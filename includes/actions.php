@@ -58,7 +58,7 @@ switch (strtolower($pa)) {
 		}//END IF
 		
 		if (strlen($codeInfo['Deps']) > 0) {
-			$replaceCode =	"\tdependencies here" . $nL;
+			$replaceCode =	"\t//dependencies here" . $nL;
 			$depArray =	explode($nL, $codeInfo['Deps']);
 			foreach ($depArray as $dependency) {
 				if ( wp_script_is($dependency, 'registered') )
