@@ -23,21 +23,28 @@ scode_read_code_files($shortcodes);
 if (count($shortcodes) > 0) {
 	foreach ($shortcodes as $key => $codeInfo) {
 		$shortcodeRows .=	'' .
-								'<tr>' . $nL .
+								'<tr id="codeRow-' . $key . '">' . $nL .
 									'<td class="vt">' .
 										$codeInfo['Name'] .
+										//'<input type="hidden" name="code['.$key.'][Name]" value="' . $codeInfo['Name'] . '" />' .
 									'</td>' . $nL .
 									'<td class="vt">' .
 										nl2br($codeInfo['Attributes']) .
+										//'<input type="hidden" name="code['.$key.'][Attributes]" value="' . $codeInfo['Attributes'] . '" />' .
 									'</td>' . $nL .
 									'<td class="vt">' .
 										nl2br($codeInfo['AttrDefaults']) .
+										//'<input type="hidden" name="code['.$key.'][AttrDefaults]" value="' . $codeInfo['AttrDefaults'] . '" />' .
 									'</td>' . $nL .
 									'<td class="vt">' .
-										(isset($codeInfo['Deps']) ? nl2br($codeInfo['Deps']) : '') .
+										nl2br($codeInfo['Deps']) .
+										//'<input type="hidden" name="code['.$key.'][Deps]" value="' . $codeInfo['Deps'] . '" />' .
 									'</td>' . $nL .
-									'<td class="vt l">' . $nL .
-										'<textarea rows="10" cols="35" readonly="readonly">' . scode_format_code($codeInfo['FunctionCode'], 'read') . '</textarea>' . $nL .
+									'<td class="vt l">' .
+										'<textarea name="code['.$key.'][FunctionCode]" rows="10" cols="35" readonly>' . scode_format_code($codeInfo['FunctionCode'], 'read') . '</textarea>' .
+									'</td>' . $nL .
+									'<td class="vt l">' .
+										'<button type="button" class="allowEdits" value="' . $key . '">Make Changes</button>' .
 									'</td>' . $nL .
 								'</tr>' . $nL .
 								'';
@@ -62,20 +69,30 @@ if (count($shortcodes) > 0) {
 	<h2>
 		Current Shortcodes
 	</h2>
-	<table class="padCells">
-		<thead>
-			<tr>
-				<th>Name</th>
-				<th>Attributes</th>
-				<th>Default Values</th>
-				<th>Dependencies</th>
-				<th>Function Code</th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php echo $shortcodeRows; ?>
-		</tbody>
-	</table>
+	<form id="scodeEditForm" action="<?php echo $this->page; ?>&pa=edit" method="post">
+		<table class="padCells">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Attributes</th>
+					<th>Default Values</th>
+					<th>Dependencies</th>
+					<th>Function Code</th>
+					<th>Options</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php echo $shortcodeRows; ?>
+			</tbody>
+			<tfoot id="editTableFooter" class="dn">
+				<tr>
+					<td colspan="100%" class="vb c">
+						<input type="submit" name="submit" value="Save Changes" />
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</form>
 	<hr>
 	<h2>
 		New Shortcode
