@@ -85,7 +85,7 @@ function scodeCreateInput(elType, elName, elValue) {
 function scodeCreateTextarea(elName, elText) {
 	var el =	document.createElement('textarea');
 	el.setAttribute('name', elName);
-	el.setAttribute('rows' 5);
+	el.setAttribute('rows', 5);
 	el.textContent = elText;
 	return el;
 }//END FUNCTION
