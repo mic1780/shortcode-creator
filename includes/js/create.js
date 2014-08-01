@@ -29,9 +29,10 @@ jQuery(function() {
 		codeRow.find('td:eq(4) textarea').prop('readonly', false);
 		//disable the clicked button
 		jQuery(this).prop('disabled', true);
+		jQuery(this).trigger('showmethebutton');
 	});
 	
-	jQuery('#scodeEditForm').one('click', '.allowEdits', function(e) {
+	jQuery('#scodeEditForm').one('showmethebutton', '.allowEdits', function(e) {
 		jQuery('#editTableFooter', '#scodeEditForm').show();
 	});
 	
