@@ -76,7 +76,10 @@ class scodePluginUpdater {
 			if (wp_remote_retrieve_response_code($this->githubAPIRequest) == '304') {
 				$this->githubAPIResult->tag_name =	$version;
 				$this->githubAPIResult->zipball_url = $zipball;
-				$this->githubAPIResult->body =	file_get_contents(SCODE_PLUGIN_DIR . 'changes.txt');
+				if (file_exists(SCODE_PLUGIN_DIR . 'changes.txt'))
+					$this->githubAPIResult->body =	file_get_contents(SCODE_PLUGIN_DIR . 'changes.txt');
+				else
+					$this->githubAPIResult->body =	'Information not availible at this time. Sorry.' . $nL . $nL . 'tested: 3.9.1';
 				return;
 			}//END IF
 		}//END IF
