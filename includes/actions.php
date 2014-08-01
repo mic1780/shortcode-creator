@@ -53,14 +53,14 @@ switch (strtolower($pa)) {
 										'';
 			}//END FOREACH LOOP
 			$replaceCode .=	"\t)";
-			$format =	str_replace('shortcode_attr(array()', $replaceCode, $format);
+			$format =	str_replace('shortcode_atts(array()', $replaceCode, $format);
 			unset($replaceCode);
 		}//END IF
 		
 		//next we add in our function code
 		if (strlen($codeInfo['FunctionCode']) > 0) {
 			$replaceCode =		"\t//function code here" . $nL;
-			$replaceCode .=	"\t" . str_replace( $nL, $nL . "\t", scode_format_code($codeInfo['FunctionCode'], 'write') );
+			$replaceCode .=	scode_format_code($codeInfo['FunctionCode'], 'write');
 			$format =	str_replace("\t//function code here", $replaceCode, $format);
 		}//END IF
 		
