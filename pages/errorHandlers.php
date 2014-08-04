@@ -20,6 +20,7 @@ if ($status === 0) {
 	 *	Error List:
 	 *		codeExists
 	 *		createFileFailed
+	 *		editFileFailed
 	 *		invalidName
 	 *		missingActionFile
 	 *		missingVariables
@@ -31,6 +32,9 @@ if ($status === 0) {
 			break;
 		case	'createfilefailed':
 			$output =	"ERROR: Failed to create your shortcode file. Please try again.";
+			break;
+		case 'editfilefailed':
+			$output =	"ERROR: One or more shortcodes were not edited.";
 			break;
 		case	'invalidname':
 			$output =	"ERROR: Action failed because the provided name was invalid. Make sure the shortcode name is not 'index' or 'format' and try again.";

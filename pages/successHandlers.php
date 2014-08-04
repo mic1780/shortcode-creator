@@ -22,11 +22,15 @@ $output =	'';
 /*
  *	Action List:
  *		create
+ *		edit
  */
 
 switch (strtolower($pa)) {
 	case	'create':
 		$output =	"Successfully created shortcode: " . (isset($_POST['newCode']['Name']) ? $_POST['newCode']['Name'] : '(code unknown. potential attack!)') . ".";
+		break;
+	case	'edit':
+		$output =	"All shortcodes were edited successfully.";
 		break;
 	default:
 		$output =	"We dont know what just succeeded but it did. But should it have?";

@@ -6,11 +6,40 @@ if (! defined('SCODE_VERSION') ) {
 	exit;
 }//END IF
 
-global $nL;
+global $nL, $excludeThese;
 
 $pa =	(isset($_POST['pa']) ? $_POST['pa'] : (isset($_GET['pa']) ? $_GET['pa'] : ''));
 
 switch (strtolower($pa)) {
+	case	'edit':
+		$code =	(isset($_POST['code']) ? $_POST['code'] : (isset($_GET['code']) ? $_GET['code'] : array()));
+		if (count($code) > 0) {
+			foreach ($code as $key => $row) {
+				if ($row['Name'] == '') {
+					$this->status =	0;
+					$this->error =		'missingVariables';
+					break;
+				}//END IF
+				if (in_array($row['Name'].'.php', $excludeThese)) {
+					$this->status =	0;
+					$this->error =		'invalidName';
+					break;
+				}//END IF
+			}//END FOREACH LOOP
+		}//END IF
+		
+		if ($this->status != 0) {
+			if (count($code) > 0) {
+				foreach ($code as $key => $row) {
+					if (scode_write_code_file($row) === false) {
+						$this->status =	0;
+						$this->error =		'editFileFailed';
+					}//END IF
+				}//END FOREACH LOOP
+			}//END IF
+		}//END IF
+			
+		break;
 	case	'create':
 		$codeInfo =	$_POST['newCode'];
 		
@@ -20,7 +49,7 @@ switch (strtolower($pa)) {
 			break;
 		}//END IF
 		
-		if ($codeInfo['Name'] == 'index' || $codeInfo['Name'] == 'format') {
+		if (in_array($codeInfo['Name'].'.php', $excludeThese)) {
 			$this->status =	0;
 			$this->error =		'invalidName';
 			break;
@@ -34,53 +63,9 @@ switch (strtolower($pa)) {
 		
 		//we know its a valid fileName and that the shortcode does not exist so we can create the file.
 		
-		//get our fotmat file
-		$format =	file_get_contents( SCODE_PLUGIN_DIR . 'includes/shortcodes/format.php' );
-		//change key words in the file
-		$format =	str_replace('scode_name', $codeInfo['Name'], $format);
-		$format =	str_replace('name_func', $codeInfo['Name'] . '_func', $format);
+		$res =	scode_write_code_file($codeInfo);
 		
-		//if we have declared attributes, make sure we have a matching number of defaults
-		$numOfAttr =	substr_count($codeInfo['Attributes'], $nL);
-		$numOfDefault =	substr_count($codeInfo['AttrDefaults'], $nL);
-		if ( (strlen($codeInfo['Attributes']) > 0 && strlen($codeInfo['AttrDefaults']) > 0) && ($numOfAttr === $numOfDefault) ) {
-			$replaceCode =	'shortcode_atts(array(' . $nL;
-			$attrArray =	explode($nL, $codeInfo['Attributes']);
-			$defArray =		explode($nL, $codeInfo['AttrDefaults']);
-			foreach ($attrArray as $index => $attr) {
-				$replaceCode .=	'' .
-										"\t\t" . "'" . $attr . "'" . " => " . "'" . $defArray[$index] . "'" . "," . $nL .
-										'';
-			}//END FOREACH LOOP
-			$replaceCode .=	"\t)";
-			$format =	str_replace('shortcode_atts(array()', $replaceCode, $format);
-			unset($replaceCode);
-		}//END IF
-		
-		if (strlen($codeInfo['Deps']) > 0) {
-			$replaceCode =	"\t//dependencies here" . $nL;
-			$depArray =	explode($nL, $codeInfo['Deps']);
-			foreach ($depArray as $dependency) {
-				if ( wp_script_is($dependency, 'registered') )
-					$replaceCode .=	"\twp_enqueue_script('{$dependency}');" . $nL;
-				if ($dependency == 'jquery-ui-dialog')
-					$replaceCode .=	"\twp_enqueue_style('wp-jquery-ui-dialog');" . $nL;
-			}//END FOREACH LOOP
-			$format =	str_replace("\t//dependencies here", $replaceCode, $format);
-			unset($replaceCode);
-		}//END IF
-		
-		//next we add in our function code
-		if (strlen($codeInfo['FunctionCode']) > 0) {
-			$replaceCode =		"\t//function code here" . $nL;
-			$replaceCode .=	scode_format_code($codeInfo['FunctionCode'], 'write');
-			$format =	str_replace("\t//function code here", $replaceCode, $format);
-		}//END IF
-		
-		//our new shortcode file is ready to go!
-		$bytes =	file_put_contents( SCODE_PLUGIN_DIR . 'includes/shortcodes/' . $codeInfo['Name'] . '.php', $format, LOCK_EX );
-		
-		if ($bytes === false) {
+		if ($res === false) {
 			$this->status =	0;
 			$this->error =		'createFileFailed';
 			break;

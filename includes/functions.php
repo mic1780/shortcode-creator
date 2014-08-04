@@ -196,4 +196,69 @@ function scode_read_code_files(&$scodeArray) {
 	
 	return true;
 }//END FUNCTION
+
+function scode_write_code_file($codeInfo) {
+	global $nL, $excludeThese;
+	$codeInfo['Name'] =	strtolower($codeInfo['Name']);
+	
+	if ($codeInfo['Name'] == '')
+		return false;
+	if (in_array($codeInfo['Name'].'.php', $excludeThese))
+		return false;
+	//if (file_exists( SCODE_PLUGIN_DIR . 'includes/shortcodes/' . $codeInfo['Name'] . '.php' )) {
+		//unlink( SCODE_PLUGIN_DIR . 'includes/shortcodes/' . $codeInfo['Name'] . '.php' );
+	//}//END IF
+	
+	//get our fotmat file
+	$format =	file_get_contents( SCODE_PLUGIN_DIR . 'includes/shortcodes/format.php' );
+	//change key words in the file
+	$format =	str_replace('scode_name', $codeInfo['Name'], $format);
+	$format =	str_replace('name_func', $codeInfo['Name'] . '_func', $format);
+	
+	//if we have declared attributes, make sure we have a matching number of defaults
+	$numOfAttr =	substr_count($codeInfo['Attributes'], $nL);
+	$numOfDefault =	substr_count($codeInfo['AttrDefaults'], $nL);
+	if ( (strlen($codeInfo['Attributes']) > 0 && strlen($codeInfo['AttrDefaults']) > 0) && ($numOfAttr === $numOfDefault) ) {
+		$replaceCode =	'shortcode_atts(array(' . $nL;
+		$attrArray =	explode($nL, $codeInfo['Attributes']);
+		$defArray =		explode($nL, $codeInfo['AttrDefaults']);
+		foreach ($attrArray as $index => $attr) {
+			$replaceCode .=	'' .
+									"\t\t" . "'" . $attr . "'" . " => " . "'" . $defArray[$index] . "'" . "," . $nL .
+									'';
+		}//END FOREACH LOOP
+		$replaceCode .=	"\t)";
+		$format =	str_replace('shortcode_atts(array()', $replaceCode, $format);
+		unset($replaceCode);
+	}//END IF
+	
+	if (strlen($codeInfo['Deps']) > 0) {
+		$replaceCode =	"\t//dependencies here" . $nL;
+		$depArray =	explode($nL, $codeInfo['Deps']);
+		foreach ($depArray as $dependency) {
+			if ( wp_script_is($dependency, 'registered') )
+				$replaceCode .=	"\twp_enqueue_script('{$dependency}');" . $nL;
+			if ($dependency == 'jquery-ui-dialog')
+				$replaceCode .=	"\twp_enqueue_style('wp-jquery-ui-dialog');" . $nL;
+		}//END FOREACH LOOP
+		$format =	str_replace("\t//dependencies here", $replaceCode, $format);
+		unset($replaceCode);
+	}//END IF
+	
+	//next we add in our function code
+	if (strlen($codeInfo['FunctionCode']) > 0) {
+		$replaceCode =		"\t//function code here" . $nL;
+		$replaceCode .=	scode_format_code($codeInfo['FunctionCode'], 'write');
+		$format =	str_replace("\t//function code here", $replaceCode, $format);
+	}//END IF
+	
+	//our new shortcode file is ready to go!
+	$bytes =	file_put_contents( SCODE_PLUGIN_DIR . 'includes/shortcodes/' . $codeInfo['Name'] . '.php', $format, LOCK_EX );
+	
+	if ($bytes === false)
+		return false;
+	else
+		return true;
+		
+}//END FUNCTION
 ?>
