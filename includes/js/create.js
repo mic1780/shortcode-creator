@@ -8,7 +8,7 @@ jQuery(function() {
 		jQuery(this).val( jQuery(this).val().replace(/[^a-zA-Z0-9\ \-\n\r]+/g, '') );
 	});
 	jQuery('#scodeEditForm').on('change', '[name^="code["][name$="][Deps]"]', function(e) {
-		jQuery(this).val( jQuery(this).val().toLowerCase().replace(/[^a-z\-\n\r]+/g, '') );
+		jQuery(this).val( jQuery(this).val().toLowerCase().replace(/[^a-z0-9\-\n\r]+/g, '') );
 	});
 	
 	//allowEdits buttons events
@@ -53,7 +53,7 @@ jQuery(function() {
 	});
 	
 	jQuery('[name="newCode[Deps]"]').on('change', function(e) {
-		jQuery(this).val( jQuery(this).val().toLowerCase().replace(/[^a-z\-\n\r]+/g, '') );
+		jQuery(this).val( jQuery(this).val().toLowerCase().replace(/[^a-z0-9\-\n\r]+/g, '') );
 	});
 	
 	jQuery('[name$="[FunctionCode]"]', '#scode-admin').on('change', function(e) {//[name="newCode[FunctionCode]"]
