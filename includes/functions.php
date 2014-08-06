@@ -64,7 +64,6 @@ if (! function_exists('echo_print_r')) {
 
 function scode_apply_all_codes($content) {
 	global $excludeThese;
-	$content .=	echo_print_r($excludeThese, true);
 	$codePath =	'includes/shortcodes/';
 	$allFiles =	glob(SCODE_PLUGIN_DIR . $codePath . '*.php');
 	$fileName =	'';
