@@ -62,8 +62,9 @@ if (! function_exists('echo_print_r')) {
 	}//END FUNCTION
 }//END IF
 
-function scode_apply_all_codes() {
+function scode_apply_all_codes($content) {
 	global $excludeThese;
+	$content .=	echo_print_r($excludeThese, true);
 	$codePath =	'includes/shortcodes/';
 	$allFiles =	glob(SCODE_PLUGIN_DIR . $codePath . '*.php');
 	$fileName =	'';
@@ -75,7 +76,12 @@ function scode_apply_all_codes() {
 			else
 				require_once($file);
 		}//END FOREACH LOOP
+		add_filter('do_shortcode', 'do_shortcode');
+		$return = apply_filters('do_shortcode', $content);
+		remove_filter('do_shortcode', 'do_shortcode');
+		return $return;
 	}//END IF
+	return $content;
 }//END FUNCTION
 
 /*
